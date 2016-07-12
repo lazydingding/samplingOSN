@@ -4,7 +4,6 @@ __version__ = '1.6'
 __author__ = 'Luping Yu (lazydingding@gmail.com)'
 
 '''Python SDK for renren API, designed for social network research'''
-'''Running Environment: Python ~3.5'''
 
 from urllib import request
 from urllib.error import HTTPError
@@ -32,17 +31,17 @@ class Wrapper():
         return Wrapper(self.api, "%s/%s" % (self.name, attr))
 
     def __call__(self, **kw):
-        url = self.URL + self.name + encode_Params(**kw)
-        return http_Request(self.api, url)
+        url = self.URL + self.name + encode_params(**kw)
+        return http_request(self.api, url)
 
-def encode_Params(**kw):
+def encode_params(**kw):
     '''Return a URL-encoded string for a dictionary of paramteres.'''
     s = '?'
     for k, v in kw.items():
         s = s + str(k) + '=' + str(v) + '&'
     return s.strip('&')
 
-def http_Request(api, url0):
+def http_request(api, url0):
     while True:
         f = None
         url = url0 + "&access_token=%s" % api.tokens[0]
@@ -50,7 +49,7 @@ def http_Request(api, url0):
             f = request.urlopen(url)
             return f.read().decode('utf-8')
         except HTTPError as e:
-            if not error_Handling(api, e):
+            if not error_handling(api, e):
                 return None
         except IOError as e:
             print(e)
@@ -59,14 +58,14 @@ def http_Request(api, url0):
                 f.close()
             # print("token: " + self.tokens[0])
 
-def error_Handling(api, e):
+def error_handling(api, e):
     '''Extract error message'''
     message = e.read().decode('utf-8')
     if "invalid_authorization.INVALID-TOKEN" in message:
-        delete_Token(api)
+        delete_token(api)
         return True
     elif "forbidden.APP_OVER_INVOCATION_LIMIT" in message:
-        change_Token(api)
+        change_token(api)
         return True
     elif "The requested resource () is not available" in message:
         print("APIError: Invalid interface name!")
@@ -76,13 +75,13 @@ def error_Handling(api, e):
     else:
         print(message)
 
-def change_Token(api):
+def change_token(api):
     '''Change the token if it overs the limit'''
     api.tokens.append(api.tokens[0])
     api.tokens.pop(0)
     print("New-TOKEN:%s" % api.tokens[0])
 
-def delete_Token(api):
+def delete_token(api):
     '''Delete the token if it is invalid'''
     print("Invalid-TOKEN:%s" % api.tokens[0])
     api.tokens.pop(0)
