@@ -51,7 +51,7 @@ def http_request(api, url0):
         except HTTPError as e:
             if not error_handling(api, e):
                 return None
-        except IOError as e:
+        except Exception as e:
             print(e)
         finally:
             if f:
