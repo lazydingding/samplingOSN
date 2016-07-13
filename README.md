@@ -65,4 +65,4 @@ bfs.run()
 ```
 
 ## The format of sample
-`&lt;uid>#&lt;friend_uid_1>,&lt;friend_uid_2>,...&lt;friend_uid_n>`
+`<uid>#<friend_uid_1>,<friend_uid_2>,...<friend_uid_n>`
