@@ -56,4 +56,4 @@ uni = UNI(api, 'ROOT-USERID', 'FILENAME')
 uni.run()
 ```
 ## The format of sample
-&lt;uid>#&lt;friend_uid_1&rt;,&lt;friend_uid_2&rt;,...&lt;friend_uid_n&rt;
+&lt;uid>#&lt;friend_uid_1>,&lt;friend_uid_2>,...&lt;friend_uid_n>
