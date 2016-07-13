@@ -1,7 +1,5 @@
 # Sampling Methods Implementation for Renren.com
 
-The document about how to use renren SDK and how to get access tokens could be found at [renrenSDK](https://github.com/lazydingding/renrenSDK)
-
 This stand-alone Python script provides several sampling methods implementation, including:
 
 * Breadth-First-Search
@@ -10,6 +8,8 @@ This stand-alone Python script provides several sampling methods implementation,
 * Uniform Sampling of UserIDs
 
 for [人人网 renren.com](http://www.renren.com), which is a typical **online social network(OSN)** in China
+
+**The document about how to use renren SDK and how to get access tokens could be found at** [renrenSDK](https://github.com/lazydingding/renrenSDK)
 
 Developed and maintained by [Luping Yu](https://github.com/lazydingding). Please feel free to report bugs and your suggestions.
 
@@ -28,8 +28,8 @@ api = API(access_token_pool)
 
 ## How to use it
 
-Before sampling, you have to choose a valid user id as root node to start the iterations.
-Besides, you should define the file(filename) to store sample data when initializing sampling method instance
+ * Before sampling, you have to choose a valid user id as root node to start the iterations.
+ * Besides, you should define the file(filename) to store sample data when initializing sampling method instance
 
 ### Breadth-First-Search
 ```python
