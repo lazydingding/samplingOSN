@@ -55,5 +55,14 @@ mhrw.run()
 uni = UNI(api, 'ROOT-USERID', 'FILENAME')
 uni.run()
 ```
+### Iterations
+
+There are one additional keyword parameters **iteration** for each sampling method instance. iteration is set to 10000 by default. If you want to change it, add it as a parameter when you initializing the instance.
+For example, a Breadth-First-Search for 100000 Iterations:
+```python
+bfs = BFS(api, 'ROOT-USERID', 'FILENAME', 100000)
+bfs.run()
+```
+
 ## The format of sample
 &lt;uid>#&lt;friend_uid_1>,&lt;friend_uid_2>,...&lt;friend_uid_n>
