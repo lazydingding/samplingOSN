@@ -1,3 +1,4 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
 __version__ = '1.0'
@@ -7,38 +8,40 @@ __author__ = 'Luping Yu (lazydingding@gmail.com)'
    Including BFS, RW, MHRW and UNI'''
 
 import random
+import queue
 
-ITERATION = 10000
+ITERATION = 20000
 PAGESIZE = 1000000
 
 class Sampling(object):
     """Sampling methods implementation."""
 
-    def __init__(self, api, root, filename, iteration=ITERATION):
+    def __init__(self, api, root, filename, iteration=ITERATION, end=0):
         self.api = api
         self.root = root
         self.filename = str(filename)
         self.iteration = int(iteration)
+        self.end = int(end)
 
 class BFS(Sampling):
     """Breadth-First-Search"""
 
     def run(self):
-        # parent: line number of current parent node
-        parent = 0
+        s, q, counter = set(), queue.Queue(), 1
+        q.put(self.root)
         with open(self.filename, 'w+') as f:
-            counter = Iteration(f, self.__class__.__name__, self.api, self.root, 1)
             while counter <= self.iteration:
-                # reset cursor
-                f.seek(0)
-                # read the line of current parent node
-                friends = f.readlines()[parent].strip().split('#')[1].split(',')
-                for friend in friends:
-                    counter = Iteration(f, self.__class__.__name__, self.api,
-                    friend, counter)
-                    if counter > self.iteration:
-                        break
-                parent += 1
+                uid = q.get()
+                if uid in s:
+                    continue
+                else:
+                    data, counter = Iteration(f, self.filename, self.api, uid, counter)
+                    if data:
+                        friends = data.split(',')
+                        if friends:
+                            for friend in friends:
+                                s.add(uid)
+                                q.put(friend)
         print("BFS runs successful! Iterations: %s" % self.iteration)
 
 class RW(Sampling):
@@ -46,13 +49,13 @@ class RW(Sampling):
 
     def run(self):
         with open(self.filename, 'w+') as f:
-            data, counter = Iteration(f, self.__class__.__name__, self.api, self.root, 1)
+            data, counter = Iteration(f, self.filename, self.api, self.root, 1)
             friends = data.split(",")
             while counter <= self.iteration:
                 # create a random integer between 1 and the number of friends
                 number = random.randint(1, len(friends))
                 friend = friends[number - 1]
-                data, counter = Iteration(f, self.__class__.__name__, self.api,
+                data, counter = Iteration(f, self.filename, self.api,
                 friend, counter, number)
                 if data:
                     friends = data.split(",")
@@ -63,7 +66,7 @@ class MHRW(Sampling):
 
     def run(self):
         with open(self.filename, 'w+') as f:
-            data, counter = Iteration(f, self.__class__.__name__, self.api, self.root, 1)
+            data, counter = Iteration(f, self.filename, self.api, self.root, 1)
             parent, friends = self.root, data.split(",")
             while counter <= self.iteration:
                 degree_parent = len(friends)
@@ -82,7 +85,7 @@ class MHRW(Sampling):
                     # generate uniformly at random a number 0 ≤ p ≤ 1.
                     p = random.random()
                 if p <= quotient:
-                    data, counter = Iteration(f, self.__class__.__name__,
+                    data, counter = Iteration(f, self.filename,
                     self.api, friend, counter, number)
                     if data:
                         parent, friends = friend, data.split(",")
@@ -94,32 +97,31 @@ class UNI(Sampling):
     """Uniform Sampling of UserIDs"""
 
     def run(self):
-        counter, uid = 1, int(self.root)
+        s, start, counter = set(), int(self.root), 1
         with open(self.filename, 'w+') as f:
             while counter <= self.iteration:
-                counter = Iteration(f, self.__class__.__name__, self.api, uid, counter)
-                # generate uniformly at random a integer between 1 and 500
-                # then iteration, this is some kind of rejection sampling
-                uid += random.randint(1, 500)
+                uid = random.randint(start, self.end)
+                if uid in s:
+                    continue
+                else:
+                    counter = Iteration(f, self.filename, self.api, uid, counter)
+                    s.add(uid)
+
         print("UNI sampling runs successful! Iterations: %s" % self.iteration)
 
-def Iteration(f, classname, api, user, counter, number=0):
+def Iteration(f, filename, api, user, counter, number=0):
     data = api.friend.list(userId=user, pageSize=PAGESIZE)
     if data:
         data = data.split("response")[1].strip('":[]}')
         if data:
             if number:
                 print("%s Iteration: %s, userId: %s, No.%s friend of it\'s parent" % (
-                classname, counter, user, number))
+                filename, counter, user, number))
             else:
-                print("%s Iteration: %s, userId: %s" % (classname, counter, user))
+                print("%s Iteration: %s, userId: %s" % (filename, counter, user))
             f.write(str(user) + '#' + data + '\n')
             counter += 1
-        else:
-            print("%s UserId: %s has no friend!" % (classname, user))
-    else:
-        print("%s UserId: %s doesn't exist!" % (classname, user))
-    if classname == 'BFS' or classname == 'UNI':
+    if 'UNI' in filename:
         return counter
     else:
         return data, counter
