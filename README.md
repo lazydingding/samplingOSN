@@ -52,7 +52,7 @@ mhrw.run()
 ### Uniform Sampling of UserIDs
 ```python
 
-uni = UNI(api, 'ROOT-USERID', 'FILENAME')
+uni = UNI(api, 'ROOT-USERID', 'FILENAME', end='end UID')
 uni.run()
 ```
 ### Iterations
