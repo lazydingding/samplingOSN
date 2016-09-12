@@ -1,10 +1,14 @@
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
+
+"""Running Environment: Python 3.5.1"""
 
 __version__ = '1.7'
 __author__ = 'Luping Yu (lazydingding@gmail.com)'
 
 '''Python SDK for renren API, designed for social network research'''
 
+import socket
 from urllib import request
 from urllib.error import HTTPError
 
@@ -45,12 +49,16 @@ def http_request(api, url0):
     while True:
         f = None
         url = url0 + "&access_token=%s" % api.tokens[0]
+        # timeout = 15s
+        # socket.setdefaulttimeout(10)
         try:
+            # f = request.urlopen(url)
             f = request.urlopen(url, timeout=15)
             return f.read().decode('utf-8')
         except HTTPError as e:
             if not error_handling(api, e):
                 return None
+        #except IOError as e: IncompleteRead
         except Exception as e:
             print(e)
         finally:
